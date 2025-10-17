@@ -62,6 +62,24 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
         .volver a:hover {
             text-decoration: underline;
         }
+
+        /* Estilo del buscador */
+        #buscador {
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto 25px auto;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #buscador:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 6px rgba(0,123,255,0.3);
+        }
     </style>
 </head>
 <body>
@@ -69,8 +87,11 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
 <div class="container table-container">
     <h2>Estudiantes Registrados</h2>
 
+    <!--Input de búsqueda -->
+    <input type="text" id="buscador" placeholder="Buscar estudiante...">
+
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle" id="tablaEstudiantes">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -102,6 +123,21 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
         <a href="index.php">← Volver al formulario</a>
     </div>
 </div>
+
+<!--Script del buscador -->
+<script>
+    const buscador = document.getElementById('buscador');
+    const filas = document.querySelectorAll('#tablaEstudiantes tbody tr');
+
+    buscador.addEventListener('keyup', function() {
+        const texto = buscador.value.toLowerCase();
+
+        filas.forEach(fila => {
+            const contenidoFila = fila.textContent.toLowerCase();
+            fila.style.display = contenidoFila.includes(texto) ? '' : 'none';
+        });
+    });
+</script>
 
 </body>
 </html>
