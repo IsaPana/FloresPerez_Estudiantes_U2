@@ -16,6 +16,12 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
+    <!-- DataTables + Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -25,7 +31,7 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
 
         .table-container {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
         }
@@ -34,12 +40,12 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
             text-align: center;
             color: #0d47a1;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         th {
             background-color: #007bff;
-            color: white;
+            color: white !important;
             text-align: center;
         }
 
@@ -48,41 +54,9 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
             vertical-align: middle;
         }
 
-        #buscador {
-            width: 100%;
-            max-width: 350px;
-            margin: 0 auto 25px auto;
-            display: block;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        #buscador:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 6px rgba(0,123,255,0.3);
-        }
-
-        .pagination-buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .pagination-buttons button {
-            margin: 0 5px;
-            padding: 8px 18px;
-            border: none;
-            border-radius: 8px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .pagination-buttons button:hover {
-            background-color: #0056b3;
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border-radius: 5px !important;
+            margin: 0 2px !important;
         }
 
         .volver {
@@ -106,11 +80,8 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
 <div class="container table-container">
     <h2>Estudiantes Registrados</h2>
 
-    <!--Input de búsqueda -->
-    <input type="text" id="buscador" placeholder="Buscar estudiante...">
-
     <div class="table-responsive">
-        <table class="table table-hover align-middle" id="tablaEstudiantes">
+        <table id="tablaEstudiantes" class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -138,64 +109,40 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
         </table>
     </div>
 
-    <!--Botones de paginación -->
-    <div class="pagination-buttons">
-        <button id="prevBtn">← Anterior</button>
-        <button id="nextBtn">Siguiente →</button>
-    </div>
-
     <div class="volver">
         <a href="index.php">← Volver al formulario</a>
     </div>
 </div>
 
-<!--cript de búsqueda + paginación -->
+<!-- Script DataTables -->
 <script>
-    const buscador = document.getElementById('buscador');
-    const filas = Array.from(document.querySelectorAll('#tablaEstudiantes tbody tr'));
-    const filasPorPagina = 10;
-    let paginaActual = 1;
-    let filasFiltradas = [...filas]; // Copia inicial
-
-    function mostrarPagina(pagina) {
-        const inicio = (pagina - 1) * filasPorPagina;
-        const fin = inicio + filasPorPagina;
-
-        filas.forEach(fila => fila.style.display = 'none');
-        filasFiltradas.slice(inicio, fin).forEach(fila => fila.style.display = '');
-
-        document.getElementById('prevBtn').disabled = pagina === 1;
-        document.getElementById('nextBtn').disabled = fin >= filasFiltradas.length;
-    }
-
-    function filtrarFilas() {
-        const texto = buscador.value.toLowerCase();
-        filasFiltradas = filas.filter(fila =>
-            fila.textContent.toLowerCase().includes(texto)
-        );
-        paginaActual = 1;
-        mostrarPagina(paginaActual);
-    }
-
-    document.getElementById('prevBtn').addEventListener('click', () => {
-        if (paginaActual > 1) {
-            paginaActual--;
-            mostrarPagina(paginaActual);
+$(document).ready(function() {
+    $('#tablaEstudiantes').DataTable({
+        "order": [[0, "desc"]],
+        "pageLength": 10,
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Todos"] ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "No hay información disponible",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ estudiantes",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron coincidencias",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente →",
+                "previous": "← Anterior"
+            }
         }
     });
-
-    document.getElementById('nextBtn').addEventListener('click', () => {
-        if (paginaActual * filasPorPagina < filasFiltradas.length) {
-            paginaActual++;
-            mostrarPagina(paginaActual);
-        }
-    });
-
-    buscador.addEventListener('keyup', filtrarFilas);
-
-    // Mostrar la primera página al cargar
-    mostrarPagina(paginaActual);
+});
 </script>
+
 
 </body>
 </html>
