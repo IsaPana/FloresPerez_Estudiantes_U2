@@ -48,22 +48,6 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
             vertical-align: middle;
         }
 
-        .volver {
-            text-align: center;
-            margin-top: 25px;
-        }
-
-        .volver a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .volver a:hover {
-            text-decoration: underline;
-        }
-
-        /* Estilo del buscador */
         #buscador {
             width: 100%;
             max-width: 350px;
@@ -79,6 +63,41 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
         #buscador:focus {
             border-color: #007bff;
             box-shadow: 0 0 6px rgba(0,123,255,0.3);
+        }
+
+        .pagination-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination-buttons button {
+            margin: 0 5px;
+            padding: 8px 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .pagination-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .volver {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .volver a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .volver a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -119,24 +138,63 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
         </table>
     </div>
 
+    <!--Botones de paginación -->
+    <div class="pagination-buttons">
+        <button id="prevBtn">← Anterior</button>
+        <button id="nextBtn">Siguiente →</button>
+    </div>
+
     <div class="volver">
         <a href="index.php">← Volver al formulario</a>
     </div>
 </div>
 
-<!--Script del buscador -->
+<!--cript de búsqueda + paginación -->
 <script>
     const buscador = document.getElementById('buscador');
-    const filas = document.querySelectorAll('#tablaEstudiantes tbody tr');
+    const filas = Array.from(document.querySelectorAll('#tablaEstudiantes tbody tr'));
+    const filasPorPagina = 10;
+    let paginaActual = 1;
+    let filasFiltradas = [...filas]; // Copia inicial
 
-    buscador.addEventListener('keyup', function() {
+    function mostrarPagina(pagina) {
+        const inicio = (pagina - 1) * filasPorPagina;
+        const fin = inicio + filasPorPagina;
+
+        filas.forEach(fila => fila.style.display = 'none');
+        filasFiltradas.slice(inicio, fin).forEach(fila => fila.style.display = '');
+
+        document.getElementById('prevBtn').disabled = pagina === 1;
+        document.getElementById('nextBtn').disabled = fin >= filasFiltradas.length;
+    }
+
+    function filtrarFilas() {
         const texto = buscador.value.toLowerCase();
+        filasFiltradas = filas.filter(fila =>
+            fila.textContent.toLowerCase().includes(texto)
+        );
+        paginaActual = 1;
+        mostrarPagina(paginaActual);
+    }
 
-        filas.forEach(fila => {
-            const contenidoFila = fila.textContent.toLowerCase();
-            fila.style.display = contenidoFila.includes(texto) ? '' : 'none';
-        });
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        if (paginaActual > 1) {
+            paginaActual--;
+            mostrarPagina(paginaActual);
+        }
     });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (paginaActual * filasPorPagina < filasFiltradas.length) {
+            paginaActual++;
+            mostrarPagina(paginaActual);
+        }
+    });
+
+    buscador.addEventListener('keyup', filtrarFilas);
+
+    // Mostrar la primera página al cargar
+    mostrarPagina(paginaActual);
 </script>
 
 </body>
