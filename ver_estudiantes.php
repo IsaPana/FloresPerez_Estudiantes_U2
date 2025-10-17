@@ -7,52 +7,56 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Estudiantes</title>
+    <title>Estudiantes Registrados</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f8;
-            padding: 40px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #ffffff);
+            padding: 50px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: center;
+            color: #0d47a1;
+            font-weight: 600;
+            margin-bottom: 25px;
         }
 
         th {
             background-color: #007bff;
             color: white;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .volver {
-            display: block;
-            margin: 20px auto;
             text-align: center;
         }
 
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .volver {
+            text-align: center;
+            margin-top: 25px;
+        }
+
         .volver a {
-            text-decoration: none;
             color: #007bff;
-            font-weight: bold;
+            text-decoration: none;
+            font-weight: 500;
         }
 
         .volver a:hover {
@@ -62,38 +66,42 @@ $resultado = $conn->query("SELECT * FROM estudiantes ORDER BY id DESC");
 </head>
 <body>
 
+<div class="container table-container">
     <h2>Estudiantes Registrados</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Carrera</th>
-                <th>Fecha de ingreso</th>
-                <th>Activo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($fila = $resultado->fetch_assoc()): ?>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
                 <tr>
-                    <td><?= $fila['id'] ?></td>
-                    <td><?= $fila['nombre'] ?></td>
-                    <td><?= $fila['correo'] ?></td>
-                    <td><?= $fila['telefono'] ?></td>
-                    <td><?= $fila['carrera'] ?></td>
-                    <td><?= $fila['fecha_ingreso'] ?></td>
-                    <td><?= $fila['activo'] ? 'Sí' : 'No' ?></td>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Carrera</th>
+                    <th>Fecha de ingreso</th>
+                    <th>Activo</th>
                 </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php while ($fila = $resultado->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $fila['id'] ?></td>
+                        <td><?= $fila['nombre'] ?></td>
+                        <td><?= $fila['correo'] ?></td>
+                        <td><?= $fila['telefono'] ?></td>
+                        <td><?= $fila['carrera'] ?></td>
+                        <td><?= $fila['fecha_ingreso'] ?></td>
+                        <td><?= $fila['activo'] ? 'Sí' : 'No' ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 
     <div class="volver">
         <a href="index.php">← Volver al formulario</a>
     </div>
+</div>
 
 </body>
 </html>
