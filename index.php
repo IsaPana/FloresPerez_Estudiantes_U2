@@ -94,7 +94,7 @@
             </form>
 
             <div class="text-center mt-3">
-                <a href="ver_estudiantes.php">Ver estudiantes registrados →</a>
+                <a href="ver_estudiantes.php">Ver estudiantes registrados</a>
             </div>
         </div>
     </div>

@@ -1,14 +1,20 @@
+version: '3.8'
+
 services:
   web:
-    image: php:8.1-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: escuela_web
     volumes:
-      - ./src:/var/www/html
+      - ./:/var/www/html
     ports:
       - "8090:80"
     depends_on:
       - db
+    restart: always
 
+ 
   db:
     image: mariadb:10.5
     container_name: escuela_db
@@ -28,11 +34,14 @@ services:
     container_name: escuela_phpmyadmin
     environment:
       PMA_HOST: db
+      PMA_USER: user
+      PMA_PASSWORD: user123
       MYSQL_ROOT_PASSWORD: root123
     ports:
       - "8091:80"
     depends_on:
       - db
+    restart: always
 
 volumes:
   db_data:
